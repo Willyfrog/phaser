@@ -42,6 +42,12 @@ Phaser.Physics.Arcade.Body = function (sprite) {
     this.position = new Phaser.Point(sprite.x, sprite.y);
 
     /**
+    * @property {Phaser.Point} next_position - The position where the physics body will be
+    * @readonly
+    */
+    this.nextPosition = new Phaser.Point(sprite.x, sprite.y);
+
+    /**
     * @property {Phaser.Point} prev - The previous position of the physics body.
     * @readonly
     */
@@ -382,8 +388,10 @@ Phaser.Physics.Arcade.Body.prototype = {
 
         this.updateBounds();
 
-        this.position.x = (this.sprite.world.x - (this.sprite.anchor.x * this.width)) + this.offset.x;
-        this.position.y = (this.sprite.world.y - (this.sprite.anchor.y * this.height)) + this.offset.y;
+        this.position.x = (this.sprite.world.x - (this.sprite.anchor.x * this.width)) + this.offset.x + (this.nextPosition.x - this.position.x);
+        this.nextPosition.x = this.position.x;
+        this.position.y = (this.sprite.world.y - (this.sprite.anchor.y * this.height)) + this.offset.y + (this.nextPosition.y - this.position.y);
+        this.nextPosition.y = this.position.y;
         this.rotation = this.sprite.angle;
 
         this.preRotation = this.rotation;
@@ -704,11 +712,11 @@ Object.defineProperty(Phaser.Physics.Arcade.Body.prototype, "right", {
 Object.defineProperty(Phaser.Physics.Arcade.Body.prototype, "x", {
 
     get: function () {
-        return this.position.x;
+        return this.nextPosition.x;
     },
 
     set: function (value) {
-        this.position.x = value;
+        this.nextPosition.x = value;
     }
 
 });
@@ -720,11 +728,11 @@ Object.defineProperty(Phaser.Physics.Arcade.Body.prototype, "x", {
 Object.defineProperty(Phaser.Physics.Arcade.Body.prototype, "y", {
 
     get: function () {
-        return this.position.y;
+        return this.nextPosition.y;
     },
 
     set: function (value) {
-        this.position.y = value;
+        this.nextPosition.y = value;
     }
 
 });
